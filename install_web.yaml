@@ -1,0 +1,27 @@
+---
+- name: install web
+  hosts: work
+  tasks:
+    - name: install http pkg
+      ansible.builtin.dnf:
+        name: httpd
+        state: latest
+
+    - name: start httpd
+      ansible.builtin.service:
+        name: httpd
+        state: started
+        enabled: yes 
+
+    - name: permit web access
+      ansible.posix.firewalld:
+        service: http
+        permanent: true
+        immediate: true  
+        state: enabled
+
+    - name: Copy file with owner and permision
+      ansible.builtin.copy:
+        src: ./index.html
+        dest: /var/www/html/index.html
+        mode: '0644'
